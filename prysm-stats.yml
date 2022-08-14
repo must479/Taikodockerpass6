@@ -10,7 +10,7 @@ services:
       - --monitoring-host
       - 0.0.0.0
   client-stats:
-    image: prysm-consensus:local
+    image: prysm-consensus:merge
     volumes:
       - /etc/localtime:/etc/localtime:ro
     entrypoint:
@@ -21,6 +21,3 @@ services:
       - http://consensus:8080/metrics
       - --clientstats-api-url
       - https://beaconcha.in/api/v1/client/metrics?apikey=${BEACON_STATS_API}&machine=${BEACON_STATS_MACHINE}
-  eth:
-    depends_on:
-      - client-stats

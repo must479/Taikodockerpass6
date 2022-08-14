@@ -3,13 +3,13 @@ x-logging: &logging
   logging:
     driver: json-file
     options:
-      max-size: 10m
+      max-size: 100m
       max-file: "3"
       tag: '{{.ImageName}}|{{.Name}}|{{.ImageFullID}}|{{.FullID}}'
 
 services:
   execution:
-    restart: "${RESTART}"
+    restart: "unless-stopped"
     build:
       context: ./akula
       dockerfile: ${AKULA_DOCKERFILE}
@@ -17,7 +17,7 @@ services:
         - BUILD_TARGET=${AKULA_SRC_BUILD_TARGET}
         - DOCKER_TAG=${AKULA_DOCKER_TAG}
     stop_grace_period: 3m
-    image: akula:local
+    image: akula:merge
     user: akula
     volumes:
       - akula-el-data:/var/lib/akula
@@ -36,11 +36,11 @@ services:
       - ${EL_P2P_PORT:-30303}
       - --rpc-listen-address
       - 0.0.0.0:${EL_RPC_PORT:-8545}
+      - --engine-listen-address
+      - 0.0.0.0:8851
       - --chain
       - ${EL_NETWORK:-mainnet}
       - --prune
-  eth:
-    depends_on:
-      - execution
 volumes:
   akula-el-data:
+  jwtsecret:
